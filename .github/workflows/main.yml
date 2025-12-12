@@ -1,0 +1,38 @@
+name: Run Postman API Tests Every 2 Hours
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"   # runs every 2 hours
+  workflow_dispatch:        # allows manual run from Actions tab
+
+jobs:
+  postman-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install Newman
+      run: npm install -g newman
+
+    - name: install HTML Report
+      run: npm install -g newman-reporter-html
+
+    - name: Run Postman Collection
+      run: |
+        newman run API Project.postman_collection_collection.json \
+          -e testenvironment.postman_environment.json \
+          --reporters cli,html \
+          --reporter-html-export newman-report.html || true
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: postman-api-report
+        path: newman-report.html

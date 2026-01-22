@@ -1,4 +1,4 @@
-name: Run Postman API Tests Every 2 Hours
+name: Run Postman API Tests Every 24 Hours
 
 on:
   schedule:
